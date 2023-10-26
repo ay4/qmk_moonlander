@@ -362,17 +362,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 │  +++  │  +++  │  +++  │  +++  │  +++  │  +++  │  +++  │                        │  +++  │  +++  │  +++  │  +++  │  +++  │  +++  │  +++  │
 │       │       │       │       │       │       │       │                        │       │       │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┼----───┤                        ├───────┼───────┼───────┼───────┼───────┼──-----┼--─────┤
-│       │       │       │       │       │       │░░░░░░░│                        │░░░░░░░│       │       │       │       │       │       │
-│       │       │       │       │       │       │░░ZZZ░░│                        │░░ZZZ░░│       │ Tab←  │   ↑   │ Tab→  │       │       │
-│       │       │       │       │       │       │░░░░░░░│                        │░░░░░░░│       │       │       │       │       │       │
+│       │ windw │ windw │ windw │ windw │ windw │░░░░░░░│                        │░░░░░░░│       │       │       │       │       │       │
+│       │  sml  │ uplft │  max  │ uprht │  sml  │░░ZZZ░░│                        │░░ZZZ░░│       │ Tab←  │   ↑   │ Tab→  │       │       │
+│       │  up   │ qartr │       │ qartr │ uprht │░░░░░░░│                        │░░░░░░░│       │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┤       │                        │       ├───────┼───────┼───────┼───────┼───----┼---────┤
-│       │       │       │       │       │       │       │                        │       │       │       │       │       │       │       │
-│       │       │       │       │       │       │  +++  │                        │  +++  │  ⌥←   │   ←   │   ↓   │   →   │  ⌥→   │       │
-│       │       │       │       │       │       │       │                        │       │       │       │       │       │       │       │
+│       │ windw │ windw │ windw │ windw │ windw │       │                        │       │       │       │       │       │       │       │
+│       │  sml  │  lft  │ centr │  rht  │  sml  │  +++  │                        │  +++  │  ⌥←   │   ←   │   ↓   │   →   │  ⌥→   │       │
+│       │  mid  │  hlf  │       │  hlf  │downrht│       │                        │       │       │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┼----───┘                        └───────┼───────┼───────┼───────┼───────┼───----┼---────┤
-│ norm. │       │       │       │       │       │                                        │       │       │       │       │       │       │
-│ shift │       │       │       │       │       │                                        │       │       │       │       │       │       │
-│       │       │       │       │       │       │                                        │       │       │       │       │       │       │
+│ norm. │ windw │ windw │       │ windw │       │                                        │       │ windw │ windw │ windw │       │       │
+│ shift │  sml  │ dnlft │       │ dnrht │       │                                        │       │  sml  │ hide  │  sml  │       │       │
+│       │  dwn  │ qartr │       │ qartr │       │                                        │       │ctr-lft│       │ctr-rht│       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┼----──-----─┐              ┌----──-----─┼───────┼───────┼───────┼───────┼───----┼---────┤
 │░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │░░░░░░░│       │░░░░░░░│░░░░░░░│░░░░░░░│
 │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│   ⌥   │   ⌘   │       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │░░░░░░░│       │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
@@ -392,9 +392,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    ___,       ___,    ___,    ___,    ___,    ___,    ___,           ___, ___,    ___,    ___,    ___,    ___,    ___,
   //------------------------------------------------------------------------------------------------------------------------------------------------------
   //------------------------------------------------------------------------------------------------------------------------------------------------------
-   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,      ZZZ,           ZZZ,  XXXXXXX,   G(S(KC_LBRC)), KC_UP,    G(S(KC_RBRC)),  XXXXXXX,     XXXXXXX,
-   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     ___,           ___,  A(KC_LEFT), KC_LEFT,       KC_DOWN,  KC_RIGHT,       A(KC_RIGHT), XXXXXXX,
-   KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                          XXXXXXX,    XXXXXXX,       XXXXXXX,  S(A(KC_RIGHT)), XXXXXXX,     XXXXXXX,
+   XXXXXXX, S(C(G(KC_1))), S(C(G(KC_Q))), S(C(G(KC_W))), S(C(G(KC_E))), S(C(G(KC_9))),      ZZZ,           ZZZ,  XXXXXXX,   G(S(KC_LBRC)),     KC_UP,   G(S(KC_RBRC)),    XXXXXXX,     XXXXXXX,
+   XXXXXXX, S(C(G(KC_2))), S(C(G(KC_A))), S(C(G(KC_S))), S(C(G(KC_D))), S(C(G(KC_0))),     ___,           ___,  A(KC_LEFT), KC_LEFT,           KC_DOWN, KC_RIGHT,         A(KC_RIGHT), XXXXXXX,
+   KC_LSFT,  S(C(G(KC_3))), S(C(G(KC_Z))), XXXXXXX, S(C(G(KC_X))), XXXXXXX,                          XXXXXXX,    S(C(G(KC_LEFT))),  G(KC_H), S(C(G(KC_RIGHT))),XXXXXXX,     XXXXXXX,
    ZZZ, ZZZ, ZZZ,              KC_LALT, KC_LCMD,         RRR,               RRR,             XXX,   XXX,       ZZZ, ZZZ, ZZZ,
    //------------------------------------------------------------------------------------------------------------------------------------------------------
                                                XXX,  ___, ___,           ___,  ___,  XXX
