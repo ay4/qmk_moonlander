@@ -37,6 +37,11 @@
 #define _NAV 4 // Navigation around the text
 #define _NUM 5 // Numbers
 
+int light_status = 0;
+RGB back1 = {129, 137, 26};
+RGB back2 = {129, 0, 0};
+RGB accent = {128, 73, 71};
+
 /*
 ███╗   ███╗ █████╗  ██████╗██████╗  ██████╗ ███████╗
 ████╗ ████║██╔══██╗██╔════╝██╔══██╗██╔═══██╗██╔════╝
@@ -59,7 +64,10 @@
 
 
 enum custom_keycodes {
-  TO_RU = SAFE_RANGE
+  TO_RU = SAFE_RANGE,
+  TOG_L,
+  DIM,
+  FIRE,
 };
 
 //
@@ -100,6 +108,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
+        case DIM:
+            if (record->event.pressed) {
+
+rgb_matrix_decrease_val();
+
+	    }
+            return false;
+
+        case FIRE:
+            if (record->event.pressed) {
+	      SEND_STRING("QMK is the best thing ever!");
+	    }
+            return false;
+
+        case TOG_L:
+            if (record->event.pressed) {
+            if (light_status==1) {
+	      light_status=0;
+	      rgb_matrix_set_color(0,255,0,0);
+		} else {
+	      light_status=1;
+	      rgb_matrix_set_color(1,255,0,0);}
+	    }
+            return false;
 
         // A macro that switches to layer _EN when held
         // and presses ESC when tapped
@@ -163,6 +195,101 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 };
 
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+
+
+
+
+    for (uint8_t i = led_min; i < led_max; i++) {
+        switch(get_highest_layer(layer_state|default_layer_state)) {
+            case 0: ;
+
+	      int arrDark[]={26, 27, 28, 62, 64};
+	      rgb_matrix_set_color(i,back1.r,back1.g,back1.b);
+
+	      int arrLen = sizeof arrDark / sizeof arrDark[0];
+	      for (int j=0; j<arrLen; j++) {
+		if (arrDark[j]==i) {
+		  rgb_matrix_set_color(i, 0,0,0);
+		  }
+		}
+	        if (light_status==0) {
+		  rgb_matrix_set_color(i, 0,0,0);
+		  }
+                break;
+            case 1:
+	      rgb_matrix_set_color(i,back2.r,back2.g,back2.b);
+	        if (light_status==0) {
+		  rgb_matrix_set_color(i, 0,0,0);
+		  }
+                break;
+            case 2:
+	      rgb_matrix_set_color(i,back1.r,back1.g,back1.b);
+	        if (light_status==0) {
+		  rgb_matrix_set_color(i, 0,0,0);
+		  }
+                break;
+            case 3:
+	      rgb_matrix_set_color(i,back1.r,back1.g,back1.b);
+	        if (light_status==0) {
+		  rgb_matrix_set_color(i, 0,0,0);
+		  }
+                break;
+            case 4: ;
+
+	      int arrLight[]={12, 16, 17, 22, 48, 52, 53, 58};
+	      rgb_matrix_set_color(i, 0,0,0);
+
+	      int arrLenLight = sizeof arrLight / sizeof arrLight[0];
+	      for (int j=0; j<arrLenLight; j++) {
+		if (arrLight[j]==i) {
+		  rgb_matrix_set_color(i, accent.r, accent.g, accent.b);
+		  }
+		}
+	        if (light_status==0) {
+		  rgb_matrix_set_color(i, 0,0,0);
+		  }
+                break;
+            case 5: ;
+
+	      int arrLight2[]={37,38,39,42,43,44,47,48,49,54};
+	      rgb_matrix_set_color(i, 0,0,0);
+
+	      int arrLenLight2 = sizeof arrLight2 / sizeof arrLight2[0];
+	      for (int j=0; j<arrLenLight2; j++) {
+		if (arrLight2[j]==i) {
+		  rgb_matrix_set_color(i, accent.r, accent.g, accent.b);
+		  }
+		}
+	        if (light_status==0) {
+		  rgb_matrix_set_color(i, 0,0,0);
+		  }
+                break;
+
+                break;
+            default:
+
+                break;
+        }
+    }
+
+rgb_matrix_set_color(35, 0,0,0);
+rgb_matrix_set_color(33, 0,0,0);
+rgb_matrix_set_color(0, 0,0,0);
+rgb_matrix_set_color(4, 0,0,0);
+rgb_matrix_set_color(19, 0,0,0);
+rgb_matrix_set_color(24, 0,0,0);
+rgb_matrix_set_color(30, 0,0,0);
+
+rgb_matrix_set_color(40, 0,0,0);
+rgb_matrix_set_color(45, 0,0,0);
+rgb_matrix_set_color(50, 0,0,0);
+rgb_matrix_set_color(66, 0,0,0);
+rgb_matrix_set_color(69, 0,0,0);
+rgb_matrix_set_color(71, 0,0,0);
+    return false;
+};
+
 /*
 ██╗      █████╗ ██╗   ██╗███████╗██████╗ ███████╗
 ██║     ██╔══██╗╚██╗ ██╔╝██╔════╝██╔══██╗██╔════╝
@@ -193,9 +320,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 │ shift │   G   │   X   │   J   │   K   │       │                                        │       │   R   │   M   │   F   │   P   │ shift │
 │       │       │       │       │       │       │                                        │       │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┼----──-----─┐              ┌----──-----─┼───────┼───────┼───────┼───────┼───----┼---────┤
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
-│░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│ ⌥ + Q │ ⌘ + Q │       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │  NAV  │  NUM  │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░ZZZ░░│ ⌥ + Q │ ⌘ + Q │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │  NAV  │  NUM  │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
 └───────┴───────┴───────┴───────┴───────┘       └------------┘              └──────-----─┘       └───────┴───────┴───────┴───----┴---────┘
 
                                    ┌───────┐┌───────┐┌───────┐              ┌───────┐┌───────┐┌───────┐
@@ -208,13 +335,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 */
   //------------------------------------------------------------------------------------------------------------------------------------------------------
-   TODO,  TODO,    TODO,    TODO,    TODO,    TODO,    TODO,           TODO, TODO,    TODO,    TODO,    TODO,    TODO,    TODO,
+   TODO,  TODO,    TODO,    TODO,    TODO,    TODO,    TODO,              TOG_L, DIM,    FIRE,    TODO,    TODO,    TODO,    TODO,
   //------------------------------------------------------------------------------------------------------------------------------------------------------
   //------------------------------------------------------------------------------------------------------------------------------------------------------
    KC_TAB,    KC_B,   KC_Y,    KC_O,    KC_U,  XXXXXXX,    ZZZ,            ZZZ,     XXXXXXX,  KC_L,    KC_D,    KC_W,   KC_Z,  XXXXXXX,
    CTL_ESC,   KC_C,   KC_I,    KC_E,    KC_A,  XXXXXXX,    TODO,           TODO,    KC_V,     KC_H,    KC_T,    KC_S,   KC_N,  RU_Q,
    ST_SH,     KC_G,   KC_X,    KC_J,    KC_K,  XXXXXXX,                             XXXXXXX,  KC_R,    KC_M,    KC_F,   KC_P,  ST_SH,
-   ZZZ, ZZZ, ZZZ,   LM(_QW, MOD_LALT),   LM(_QW, MOD_LGUI),     RRR,       RRR,             MO(_NAV),   MO(_NUM),       ZZZ, ZZZ, ZZZ,
+   ZZZ,    LM(_QW, MOD_LALT),   LM(_QW, MOD_LGUI), ZZZ, ZZZ,    RRR,       RRR,             MO(_NAV),   MO(_NUM),       ZZZ, ZZZ, ZZZ,
    //------------------------------------------------------------------------------------------------------------------------------------------------------
                                             LT(_SYM, KC_SPC),  TODO, TODO,           TODO,  TODO,  KC_BSPC
     ),
@@ -238,9 +365,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 │  +++  │   Г   │   Ш   │   Ж   │   К   │   Щ   │                                        │   Х   │   Р   │   М   │   Ф   │   П   │  +++  │
 │       │       │       │       │       │       │                                        │       │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┼----──-----─┐              ┌----──-----─┼───────┼───────┼───────┼───────┼───----┼---────┤
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
-│░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│ ⌥ + Q │ ⌘ + Q │       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │  +++  │  +++  │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░ZZZ░░│ ⌥ + Q │ ⌘ + Q │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │  +++  │  +++  │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
 └───────┴───────┴───────┴───────┴───────┘       └------------┘              └──────-----─┘       └───────┴───────┴───────┴───----┴---────┘
 
                                    ┌───────┐┌───────┐┌───────┐              ┌───────┐┌───────┐┌───────┐
@@ -259,7 +386,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    _______, RU_BE,   RU_Y,    RU_O,    RU_U,    RU_UE,   ZZZ,           ZZZ,     RU_TS,   RU_L,    RU_D,    RU_Z,    RU_YA,     RU_HARD,
    EN_ESC,  RU_CH,   RU_I,    RU_E,    RU_A,    RU_J,    ___,           ___,     RU_V,    RU_N,    RU_T,    RU_S,    RU_SOFT,   RU_YU,
    _______, RU_G,    RU_SH,   RU_ZH,   RU_K,    RU_SCH,                          RU_KH,   RU_R,    RU_M,    RU_F,    RU_PE,     KC_TRNS,
-   ZZZ, ZZZ, ZZZ,   ALT_QW,   CMD_QW,                       RRR,       RRR,             ___,   ___,       ZZZ, ZZZ, ZZZ,
+   ZZZ,    ALT_QW,   CMD_QW,  ZZZ, ZZZ,                     RRR,       RRR,             ___,   ___,       ZZZ, ZZZ, ZZZ,
    //------------------------------------------------------------------------------------------------------------------------------------------------------
                                                RU_SYM,  ___, ___,           ___,  ___,  KC_BSPC
     ),
@@ -283,9 +410,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 │       │   =   │   <   │   {   │   '   │   "   │                                        │   ~   │   ?   │   }   │   >   │   =   │       │
 │       │       │       │       │       │       │                                        │       │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┼----──-----─┐              ┌----──-----─┼───────┼───────┼───────┼───────┼───----┼---────┤
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
-│░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│       │       │       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │       │       │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░ZZZ░░│       │       │░░ZZZ░░│░░ZZZ░░│       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │       │       │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
 └───────┴───────┴───────┴───────┴───────┘       └------------┘              └──────-----─┘       └───────┴───────┴───────┴───----┴---────┘
 
                                    ┌───────┐┌───────┐┌───────┐              ┌───────┐┌───────┐┌───────┐
@@ -304,7 +431,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    XXXXXXX, AY_DLR,    AY_UNDR,    AY_LBRC,   AY_MINS,    AY_MDASH,   ZZZ,           ZZZ,  AY_SLSH,   AY_EXCL,    AY_RBRC,    AY_STAR,  AY_PERC,  XXXXXXX,
    XXXXXXX, AY_AT,     AY_PLUS,    AY_LPRN,   AY_COMM,    AY_SCLN,    ___,           ___,  AY_CLN,    AY_DOT,     AY_RPRN,    AY_HASH,  AY_AMPER, XXXXXXX,
    XXXXXXX, AY_EQL,    AY_LCORN,   AY_LCURL,  AY_APOS,    AY_QUOTE,                        AY_TILDE,  AY_QUEST,   AY_RCURL,   AY_RCORN, AY_EQL,   XXXXXXX,
-   ZZZ, ZZZ, ZZZ,              XXX,   XXX,                       RRR,               RRR,             XXX,   XXX,       ZZZ, ZZZ, ZZZ,
+   ZZZ,               XXX,   XXX,  ZZZ, ZZZ,                     RRR,               RRR,             XXX,   XXX,       ZZZ, ZZZ, ZZZ,
    //------------------------------------------------------------------------------------------------------------------------------------------------------
                                                XXX,  ___, ___,           ___,  ___,  KC_ENT
     ),
@@ -329,9 +456,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 │ shift │   Z   │   X   │   C   │   V   │   B   │                                        │   N   │   M   │   ,   │   .   │   /   │       │
 │       │       │       │       │       │       │                                        │       │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┼----──-----─┐              ┌----──-----─┼───────┼───────┼───────┼───────┼───----┼---────┤
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
-│░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│   ⌥   │   ⌘   │       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │  +++  │  +++  │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░ZZZ░░│   ⌥   │   ⌘   │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │  +++  │  +++  │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │       │       │░░░░░░░│░░░░░░░│░░░░░░░│
 └───────┴───────┴───────┴───────┴───────┘       └------------┘              └──────-----─┘       └───────┴───────┴───────┴───----┴---────┘
 
                                    ┌───────┐┌───────┐┌───────┐              ┌───────┐┌───────┐┌───────┐
@@ -350,7 +477,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    _______,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,      ZZZ,           ZZZ,  KC_Y,    KC_U,    KC_I,     KC_O,    KC_P,      KC_LBRC,
    _______,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,      ___,           ___,  KC_H,    KC_J,    KC_K,     KC_L,    KC_SCLN,   KC_QUOT,
    KC_LSFT,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                           KC_N,    KC_M,    KC_COMM,  KC_DOT,  KC_SLSH,   XXXXXXX,
-   ZZZ, ZZZ, ZZZ,              KC_LALT, KC_LCMD,         RRR,               RRR,             ___,   ___,       ZZZ, ZZZ, ZZZ,
+   ZZZ,               KC_LALT, KC_LCMD, ZZZ, ZZZ,        RRR,               RRR,             ___,   ___,       ZZZ, ZZZ, ZZZ,
    //------------------------------------------------------------------------------------------------------------------------------------------------------
                                                ___,  ___, ___,           ___,  ___,  ___
     ),
@@ -374,9 +501,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 │ shift │  sml  │ dnlft │       │ dnrht │       │                                        │       │  sml  │ hide  │  sml  │       │       │
 │       │  dwn  │ qartr │       │ qartr │       │                                        │       │ctr-lft│       │ctr-rht│       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┼----──-----─┐              ┌----──-----─┼───────┼───────┼───────┼───────┼───----┼---────┤
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │░░░░░░░│       │░░░░░░░│░░░░░░░│░░░░░░░│
-│░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│   ⌥   │   ⌘   │       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │░░░░░░░│       │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │░░░░░░░│       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │░░░░░░░│       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░ZZZ░░│   ⌥   │   ⌘   │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │░░░░░░░│       │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │░░░░░░░│       │░░░░░░░│░░░░░░░│░░░░░░░│
 └───────┴───────┴───────┴───────┴───────┘       └------------┘              └──────-----─┘       └───────┴───────┴───────┴───----┴---────┘
 
                                    ┌───────┐┌───────┐┌───────┐              ┌───────┐┌───────┐┌───────┐
@@ -395,7 +522,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    XXXXXXX, S(C(G(KC_1))), S(C(G(KC_Q))), S(C(G(KC_W))), S(C(G(KC_E))), S(C(G(KC_9))),      ZZZ,           ZZZ,  XXXXXXX,   G(S(KC_LBRC)),     KC_UP,   G(S(KC_RBRC)),    XXXXXXX,     XXXXXXX,
    XXXXXXX, S(C(G(KC_2))), S(C(G(KC_A))), S(C(G(KC_S))), S(C(G(KC_D))), S(C(G(KC_0))),     ___,           ___,  A(KC_LEFT), KC_LEFT,           KC_DOWN, KC_RIGHT,         A(KC_RIGHT), XXXXXXX,
    KC_LSFT,  S(C(G(KC_3))), S(C(G(KC_Z))), XXXXXXX, S(C(G(KC_X))), XXXXXXX,                          XXXXXXX,    S(C(G(KC_LEFT))),  G(KC_H), S(C(G(KC_RIGHT))),XXXXXXX,     XXXXXXX,
-   ZZZ, ZZZ, ZZZ,              KC_LALT, KC_LCMD,         RRR,               RRR,             XXX,   XXX,       ZZZ, ZZZ, ZZZ,
+   ZZZ,               KC_LALT, KC_LCMD, ZZZ, ZZZ,        RRR,               RRR,             XXX,   XXX,       ZZZ, ZZZ, ZZZ,
    //------------------------------------------------------------------------------------------------------------------------------------------------------
                                                XXX,  ___, ___,           ___,  ___,  XXX
     ),
@@ -419,9 +546,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 │ shift │       │       │       │       │       │                                        │       │       │   0   │   7   │   8   │   9   │
 │       │       │       │       │       │       │                                        │       │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┼────---┼----──-----─┐              ┌----──-----─┼───────┼───────┼───────┼───────┼───----┼---────┤
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │       │░░░░░░░│░░░░░░░│░░░░░░░│░░░░░░░│
-│░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│       │       │       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │       │░░░░░░░│░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
-│░░░░░░░│░░░░░░░│░░░░░░░│       │       │       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │       │░░░░░░░│░░░░░░░│░░░░░░░│░░░░░░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ \             /░░░░░░░░░░░░│       │░░░░░░░│       │░░░░░░░│░░░░░░░│░░░░░░░│
+│░░ZZZ░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ |             │░░░░░░░░░░░░│       │░░░░░░░│       │░░ZZZ░░│░░ZZZ░░│░░ZZZ░░│
+│░░░░░░░│       │       │░░░░░░░│░░░░░░░│       │░░░░░░░░░░░░ /             \░░░░░░░░░░░░│       │░░░░░░░│       │░░░░░░░│░░░░░░░│░░░░░░░│
 └───────┴───────┴───────┴───────┴───────┘       └------------┘              └──────-----─┘       └───────┴───────┴───────┴───----┴---────┘
 
                                    ┌───────┐┌───────┐┌───────┐              ┌───────┐┌───────┐┌───────┐
@@ -440,7 +567,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,      ZZZ,           ZZZ,  XXXXXXX, XXXXXXX, XXXXXXX,   KC_1,    KC_2,    KC_3,
    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     ___,           ___,   XXXXXXX, XXXXXXX, XXXXXXX,   KC_4,    KC_5,    KC_6,
    KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                           XXXXXXX, XXXXXXX, KC_0,      KC_7,    KC_8,    KC_9,
-   ZZZ, ZZZ, ZZZ,              XXX, XXX,                 RRR,               RRR,             XXX,   XXX,       ZZZ, ZZZ, ZZZ,
+   ZZZ,               XXX, XXX, ZZZ, ZZZ,                RRR,               RRR,             XXX,   XXX,       ZZZ, ZZZ, ZZZ,
    //------------------------------------------------------------------------------------------------------------------------------------------------------
                                                XXX,  ___, ___,           ___,  ___,  XXX
     )
